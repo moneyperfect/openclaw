@@ -1,4 +1,4 @@
-import { useState, useRef, KeyboardEvent } from 'react';
+import { useState, useRef, KeyboardEvent, useEffect } from 'react';
 import { Send, Paperclip, Smile } from 'lucide-react';
 import { useChatStore } from '../store/chatStore';
 
@@ -6,6 +6,13 @@ export default function InputBar() {
     const [text, setText] = useState('');
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const { sendMessage, isLoading, activeSessionId } = useChatStore();
+
+    // Focus input on mount (desktop only)
+    useEffect(() => {
+        if (textareaRef.current && window.innerWidth >= 768) {
+            textareaRef.current.focus();
+        }
+    }, [activeSessionId]);
 
     // Handle send
     const handleSend = async () => {
@@ -24,8 +31,9 @@ export default function InputBar() {
 
     // Handle key press
     const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-        // Enter to send, Shift+Enter for newline
-        if (e.key === 'Enter' && !e.shiftKey) {
+        // Enter to send (desktop), Shift+Enter for newline
+        // On mobile, Enter always creates newline
+        if (e.key === 'Enter' && !e.shiftKey && window.innerWidth >= 768) {
             e.preventDefault();
             handleSend();
         }
@@ -38,29 +46,30 @@ export default function InputBar() {
 
         // Auto-resize
         target.style.height = 'auto';
-        const newHeight = Math.min(target.scrollHeight, 200);
+        const newHeight = Math.min(target.scrollHeight, 120);
         target.style.height = `${newHeight}px`;
     };
 
     const canSend = text.trim() && !isLoading && activeSessionId;
 
     return (
-        <div className="border-t border-telegram-border bg-telegram-bg-secondary/80 backdrop-blur-sm">
+        <div className="border-t border-telegram-border bg-telegram-bg-secondary/80 backdrop-blur-sm safe-area-bottom">
             <div className="flex items-end gap-2 px-3 py-2">
                 {/* Attachment button (placeholder) */}
                 <button
                     className="
-            p-2.5
+            p-2
             text-telegram-text-muted
             hover:text-telegram-text-secondary
-            hover:bg-telegram-bg-hover
+            active:bg-telegram-bg-hover
             rounded-full
             transition-colors
             flex-shrink-0
+            touch-manipulation
           "
                     title="附件"
                 >
-                    <Paperclip size={22} />
+                    <Paperclip size={24} />
                 </button>
 
                 {/* Text input */}
@@ -75,7 +84,7 @@ export default function InputBar() {
                         rows={1}
                         className="
               w-full
-              py-2.5 px-4
+              py-3 px-4
               bg-telegram-bg-tertiary
               text-telegram-text-primary
               placeholder:text-telegram-text-muted
@@ -83,29 +92,33 @@ export default function InputBar() {
               border-none
               outline-none
               resize-none
-              max-h-[200px]
+              max-h-[120px]
+              text-base
               focus:ring-2 focus:ring-telegram-accent-blue/20
               transition-all
               disabled:opacity-50
+              touch-manipulation
             "
-                        style={{ height: 'auto', minHeight: '44px' }}
+                        style={{ height: 'auto', minHeight: '48px' }}
                     />
                 </div>
 
-                {/* Emoji button (placeholder) */}
+                {/* Emoji button (placeholder) - hidden on small screens to save space */}
                 <button
                     className="
-            p-2.5
+            p-2
             text-telegram-text-muted
             hover:text-telegram-text-secondary
-            hover:bg-telegram-bg-hover
+            active:bg-telegram-bg-hover
             rounded-full
             transition-colors
             flex-shrink-0
+            touch-manipulation
+            hidden sm:flex
           "
                     title="表情"
                 >
-                    <Smile size={22} />
+                    <Smile size={24} />
                 </button>
 
                 {/* Send button */}
@@ -113,26 +126,21 @@ export default function InputBar() {
                     onClick={handleSend}
                     disabled={!canSend}
                     className={`
-            p-2.5
+            p-3
             rounded-full
             transition-all duration-200
             flex-shrink-0
+            touch-manipulation
+            active:scale-95
             ${canSend
-                            ? 'bg-telegram-accent-blue text-white hover:bg-telegram-accent-blue/90 scale-100'
-                            : 'bg-telegram-bg-tertiary text-telegram-text-muted cursor-not-allowed scale-95'
+                            ? 'bg-telegram-accent-blue text-white'
+                            : 'bg-telegram-bg-tertiary text-telegram-text-muted cursor-not-allowed'
                         }
           `}
                     title="发送"
                 >
-                    <Send size={20} className={canSend ? 'translate-x-0.5' : ''} />
+                    <Send size={22} className={canSend ? 'translate-x-0.5' : ''} />
                 </button>
-            </div>
-
-            {/* Hint text */}
-            <div className="px-4 pb-2 -mt-1">
-                <p className="text-[10px] text-telegram-text-muted text-center">
-                    Enter 发送 · Shift+Enter 换行
-                </p>
             </div>
         </div>
     );
