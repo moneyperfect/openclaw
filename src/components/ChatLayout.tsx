@@ -57,31 +57,56 @@ export default function ChatLayout() {
           background-color: rgb(255 255 255);
         }
         .light .bg-telegram-bg-secondary {
-          background-color: rgb(240 242 245);
+          background-color: rgb(248 249 250);
         }
         .light .bg-telegram-bg-tertiary {
-          background-color: rgb(228 230 235);
+          background-color: rgb(241 243 244);
         }
         .light .bg-telegram-bg-hover:hover {
-          background-color: rgb(232 232 232);
+          background-color: rgb(232 234 237);
         }
         .light .text-telegram-text-primary {
-          color: rgb(0 0 0);
+          color: rgb(32 33 36) !important;
         }
         .light .text-telegram-text-secondary {
-          color: rgb(101 103 107);
+          color: rgb(95 99 104) !important;
         }
         .light .text-telegram-text-muted {
-          color: rgb(138 141 145);
+          color: rgb(128 134 139) !important;
         }
         .light .border-telegram-border {
-          border-color: rgb(229 231 235);
+          border-color: rgb(218 220 224);
         }
         .light .bg-telegram-bubble-sent {
-          background-color: rgb(231 253 216);
+          background-color: rgb(210 227 252);
         }
         .light .bg-telegram-bubble-received {
           background-color: rgb(255 255 255);
+          box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .light .bg-gradient-to-br {
+          background: rgb(255 255 255) !important;
+        }
+        /* Fix message text in light mode */
+        .light .message-content {
+          color: rgb(32 33 36) !important;
+        }
+        .light .message-content pre {
+          background: rgb(241 243 244);
+          color: rgb(32 33 36);
+        }
+        .light .message-content code {
+          background: rgb(241 243 244);
+          color: rgb(32 33 36);
+        }
+        /* Fix input area */
+        .light input,
+        .light textarea {
+          color: rgb(32 33 36) !important;
+        }
+        .light input::placeholder,
+        .light textarea::placeholder {
+          color: rgb(128 134 139) !important;
         }
       `}</style>
     </div>
